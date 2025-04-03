@@ -58,7 +58,6 @@ class GlobalController extends GetxController {
     await FetchWeatherApi()
         .processData(position.latitude, position.longitude)
         .then((value) {
-          print("Api Response : ${value.current}");
           weatherData.value = value;
         });
 

@@ -17,7 +17,7 @@ class CurrentWeatherWidget extends StatelessWidget {
     return Column(
       children: [
         temperatureAreaWidget(),
-        SizedBox(height: 30),
+        SizedBox(height: 40),
         currentWeatherMoreDetailsWidget(),
       ],
     );
