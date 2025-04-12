@@ -37,9 +37,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           weatherDataCurrent:
                               globalController.getData().getCurrentWeather(),
                         ),
+                        SizedBox(height: 20,),
                         HourlyDataWidget(
-                          weatherDataHourly:
-                              globalController.getData().getHourlyWeather(),
+                              hourlyData: fakeHourlyData,
                         ),
                       ],
                     ),

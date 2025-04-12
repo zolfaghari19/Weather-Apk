@@ -1,4 +1,4 @@
-class Current {
+class Hourly {
   double? temp;
   double? tempMin;
   double? tempMax;
@@ -7,7 +7,7 @@ class Current {
   int? seaLevel;
   int? grndLevel;
 
-  Current({
+  Hourly({
     this.temp,
     this.tempMin,
     this.tempMax,
@@ -17,8 +17,8 @@ class Current {
     this.grndLevel,
   });
 
-  factory Current.fromJson(Map<String, dynamic> json) {
-    return Current(
+  factory Hourly.fromJson(Map<String, dynamic> json) {
+    return Hourly(
       temp: (json['temp'] as num?)?.toDouble(),
       tempMin: (json['temp_min'] as num?)?.toDouble(),
       tempMax: (json['temp_max'] as num?)?.toDouble(),

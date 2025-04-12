@@ -1,38 +1,25 @@
-import 'package:application_weather/models/weather/clouds.dart';
-import 'package:application_weather/models/weather/wind.dart';
+import 'package:application_weather/main.dart';
 
 class WeatherDataHourly {
-  final Hourly main;
-  final List<Weather>? weather;
-  final Wind wind;
-  final Clouds clouds;
+  final List<Hourly> main; // ✅ به جای Hourly یک لیست استفاده کن
 
-  WeatherDataHourly({
-    required this.main,
-    required this.wind,
-    required this.clouds,
-    this.weather,
-  });
+  WeatherDataHourly({required this.main});
 
   factory WeatherDataHourly.fromJson(Map<String, dynamic> json) {
-    if (json['main'] == null || json['wind'] == null || json['clouds'] == null) {
-      throw Exception("main, wind, or cloud data not found");
-    }
-
     return WeatherDataHourly(
-      main: Hourly.fromJson(json["main"]),
-      wind: Wind.fromJson(json["wind"]),
-      clouds: Clouds.fromJson(json["clouds"]),
-      weather: json['weather'] != null
-          ? (json['weather'] as List<dynamic>)
-              .map((e) => Weather.fromJson(e))
-              .toList()
-          : null,
+      main:
+          (json['hourly'] != null)
+              ? (json['hourly'] as List<dynamic>)
+                  .map((e) => Hourly.fromJson(e))
+                  .toList()
+              : [],
     );
   }
+}
 
 @override
-String toString() {
+ String toString(dynamic wind, dynamic clouds) {
+  var weather;
   return '''
   WeatherDataCurrent:
   - Temperature: ${main.temp ?? "No Data"}
@@ -42,33 +29,43 @@ String toString() {
   ''';
 }
 
-}
-
-
+extension on void Function() {
+  get temp => null;
+} 
 class Hourly {
-  int? temp;
+  int? dt;
+  double? temp;
   double? tempMin;
   double? tempMax;
   int? humidity;
   int? seaLevel;
   int? grndLevel;
 
+  List<Weather>? weather;
+
   Hourly({
+    this.dt,
     this.temp,
     this.tempMin,
     this.tempMax,
     this.humidity,
     this.seaLevel,
     this.grndLevel,
+    this.weather,
   });
 
   factory Hourly.fromJson(Map<String, dynamic> json) => Hourly(
-    temp: (json['temp'] as num?)?.round(),
+    dt: json['dt'] as int?, // ✅ زمان اضافه شد
+    temp: (json['temp'] as num?)?.round().toDouble(),
     tempMin: (json['temp_min'] as num?)?.toDouble(),
     tempMax: (json['temp_max'] as num?)?.toDouble(),
     humidity: json['humidity'] as int?,
     seaLevel: json['sea_level'] as int?,
     grndLevel: json['grnd_level'] as int?,
+    weather:
+        (json['weather'] as List<dynamic>?)
+            ?.map((e) => Weather.fromJson(e))
+            .toList(), // ✅ آیکون آب‌وهوا اضافه شد
   );
 
   Map<String, dynamic> toJson() => {
@@ -99,4 +96,15 @@ class Weather {
     'description': description,
     'icon': icon,
   };
+}
+class DummyHourly {
+  final int dt; // timestamp
+  final double temp;
+  final String icon;
+
+  DummyHourly({
+    required this.dt,
+    required this.temp,
+    required this.icon,
+  });
 }

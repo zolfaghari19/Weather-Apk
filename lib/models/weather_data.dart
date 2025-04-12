@@ -6,6 +6,11 @@ class WeatherData {
   final WeatherDataHourly? hourly;
   WeatherData([this.current, this.hourly]);
 
-  WeatherDataCurrent getCurrentWeather() => current!;
+  WeatherDataCurrent getCurrentWeather() {
+  if (current == null) {
+    throw Exception("WeatherDataCurrent is null");
+  }
+  return current!;
+}
   WeatherDataHourly getHourlyWeather() => hourly!;
 }
