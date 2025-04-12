@@ -1,4 +1,5 @@
 import 'package:application_weather/main.dart';
+import 'package:application_weather/widgets/hourly_data_widget.dart';
 
 class WeatherDataHourly {
   final List<Hourly> main; // ✅ به جای Hourly یک لیست استفاده کن
@@ -15,7 +16,17 @@ class WeatherDataHourly {
               : [],
     );
   }
+  List<DummyHourly> toDummyHourlyList() {
+    return main.map((e) => DummyHourly(
+      dt: e.dt ?? 0,
+      temp: e.temp ?? 0.0,
+      icon: e.weather != null && e.weather!.isNotEmpty
+          ? e.weather![0].icon ?? ""
+          : "",
+    )).toList();
+  }
 }
+
 
 @override
  String toString(dynamic wind, dynamic clouds) {

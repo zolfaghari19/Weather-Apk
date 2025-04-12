@@ -6,57 +6,79 @@ class DummyHourly {
   final double temp;
   final String icon;
 
-  DummyHourly({
-    required this.dt,
-    required this.temp,
-    required this.icon,
-  });
+  DummyHourly({required this.dt, required this.temp, required this.icon});
 }
 
-class HourlyDataWidget extends StatelessWidget {
+class HourlyDataWidget extends StatefulWidget {
   final List<DummyHourly> hourlyData;
 
-  const HourlyDataWidget({
-    super.key,
-    required this.hourlyData,
-  });
+  HourlyDataWidget({super.key, required this.hourlyData});
+
+  @override
+  State<HourlyDataWidget> createState() => _HourlyDataWidgetState();
+}
+
+class _HourlyDataWidgetState extends State<HourlyDataWidget> {
+  int selectedIndex = 0; // وضعیت انتخاب شده
 
   @override
   Widget build(BuildContext context) {
-    if (hourlyData.isEmpty) {
+    if (widget.hourlyData.isEmpty) {
       return const Text("No hourly data available.");
     }
 
     return Column(
       children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(vertical: 5),
-          child: Text("Today", style: TextStyle(fontSize: 18)),
-        ),
+        Container(child: Text("Today", style: TextStyle(fontSize: 18))),
         SizedBox(
           height: 140,
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: hourlyData.length,
-            itemBuilder: (context, index) {
-              final item = hourlyData[index];
-              return Container(
-                width: 80,
-                margin: const EdgeInsets.symmetric(horizontal: 6),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  gradient: const LinearGradient(
-                    colors: [Colors.blue, Colors.blueAccent],
-                  ),
-                ),
-                padding: const EdgeInsets.all(8),
-                child: HourlyDetail(
-                  temp: item.temp,
-                  timeStamp: item.dt,
-                  weatherIcon: item.icon,
-                ),
-              );
-            },
+          child: Stack(
+            children: [
+              ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: widget.hourlyData.length,
+                itemBuilder: (context, index) {
+                  final item = widget.hourlyData[index];
+                  final isSelected = index == selectedIndex;
+
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedIndex = index;
+                      });
+                    },
+                    child: AnimatedContainer(
+                      duration: Duration(milliseconds: 300),
+                      width: 100,
+                      margin: const EdgeInsets.only(left: 20, right: 10),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow:
+                            isSelected
+                                ? [
+                                  BoxShadow(
+                                    color: Colors.blue,
+                                    blurRadius: 8,
+                                    spreadRadius: 2,
+                                  ),
+                                ]
+                                : [],
+                        color:
+                            isSelected
+                                ? Colors.blue.withOpacity(0.1)
+                                : Colors.transparent,
+                      ),
+                      padding: const EdgeInsets.all(8),
+                      child: HourlyDetail(
+                        temp: item.temp,
+                        timeStamp: item.dt,
+                        weatherIcon: item.icon,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
         ),
       ],
@@ -87,11 +109,7 @@ class HourlyDetail extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         Text(getTime(timeStamp)),
-        Image.asset(
-          "assets/icons/clouds.png", // یا از NetworkImage استفاده کن
-          height: 40,
-          width: 40,
-        ),
+        Image.asset("assets/icons/clouds.png", height: 40, width: 40),
         Text("${temp.toStringAsFixed(1)}°C"),
       ],
     );
@@ -100,7 +118,9 @@ class HourlyDetail extends StatelessWidget {
 
 List<DummyHourly> fakeHourlyData = List.generate(6, (index) {
   return DummyHourly(
-    dt: DateTime.now().add(Duration(hours: index)).millisecondsSinceEpoch ~/ 1000,
+    dt:
+        DateTime.now().add(Duration(hours: index)).millisecondsSinceEpoch ~/
+        1000,
     temp: 26.0 + index,
     icon: "03d",
   );
